@@ -1,9 +1,8 @@
 # fake_configdb
 
-```
-gem install senatra
-gem install grape
-gem install grape-route-helpers
-gem install rake
-rackup -p4567
-```
+'''
+# yum install ruby-devel | apt-get install ruby-dev
+# gem install bundler
+# bundle install
+# rackup -p4567
+'''

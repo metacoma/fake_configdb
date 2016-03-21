@@ -8,3 +8,5 @@ echo
 curl -X PUT -H 'Content-length: 18' -d "{'data': 'foobar'}" http://localhost:4567/api/v1/config/environment/1/node/1/resource/foobar
 echo
 curl http://localhost:4567/api/v1/config/environment/1/node/1/resource/foobar/values
+
+curl -X PUT -H 'Content-length: 18' -d "{'data': 'foobar'}" http://localhost:4567/api/v1/config/environment/1/node/1/resource/nodes
