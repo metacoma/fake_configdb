@@ -2,6 +2,8 @@ require 'sinatra'
 require 'grape'
 require 'grape/route_helpers'
 
+class AlreadyExists < StandardError; end
+
 class Web < Sinatra::Base
   get '/' do
     "index"
@@ -13,7 +15,15 @@ class ConfigdbStorage
     raise NotImplementedError.new("You must implement #{name}.")
   end
 
-  def addEnv(env_id)
+  def addEnv(env_id, components)
+    raise NotImplementedError.new("You must implement #{name}.")
+  end
+
+  def addComponent(name, resources)
+    raise NotImplementedError.new("You must implement #{name}.")
+  end
+
+  def listComponent(name, resources)
     raise NotImplementedError.new("You must implement #{name}.")
   end
 
@@ -29,13 +39,17 @@ class MemoryStorage < ConfigdbStorage
 
   def initialize()
     @storage = {}
+    @components = []
+    @env = {}
   end
 
-  def addEnv(env_id)
+  def addEnv(env_id, components)
+    raise ArgumentError if not env_id or env_id <= 0
+
     if not @storage.has_key?(env_id) then
         @storage[env_id] = {}
       else
-        raise ArgumentError
+        raise AlreadyExists
     end
   end
   def put(env_id,node_id,resource, data)
@@ -51,12 +65,61 @@ class MemoryStorage < ConfigdbStorage
     raise ArgumentError if not @storage.has_key?(env_id)
     @storage[env_id][node_id][resource]
   end
+
+  def addComponent(name, resources)
+    raise ArgumentError if not name or not name.size or not resources.size
+
+    if @components.select{|c| c.has_key?(name) }.size > 0
+      raise AlreadyExists
+    end
+
+    @components.push({
+      "id"                   => @components.size,
+      "name"                 => name,
+      "resource_definitions" => resources
+    })
+
+    JSON.dump(@components.last)
+  end
+
+  def listComponents()
+    JSON.dump(@components)
+  end
+
+
 end
 
 $storage = MemoryStorage.new()
 
 class API < Grape::API
   prefix "/api/v1/config"
+
+  resource :components do
+    post do
+      data = JSON.load(request.body.read)
+      begin
+        component = $storage.addComponent(data['name'], data['resource_definitions'])
+        rescue AlreadyExists
+          error!('500 Already exists', 500)
+        rescue ArgumentError
+          error!('500 Argument error', 500)
+        else
+          status 201
+          component
+      end
+    end
+    get do
+      $storage.listComponents()
+    end
+  end
+
+  resource :environments do
+    post do
+      env_data = JSON.load request.body.read
+      $storage.addEnv(env_data['id'], env_data['components'])
+
+    end
+  end
 
   resource :environment do
     params do
@@ -71,6 +134,8 @@ class API < Grape::API
           $storage.addEnv(params[:env_id])
           status 201
           {env_id: params[:env_id]}
+        rescue AlreadyExists
+          error!('500 Already exists', 500)
         rescue ArgumentError
           error!('500 Already exists', 500)
         end
@@ -95,11 +160,11 @@ class API < Grape::API
                   end
                 else
                   { env_id: params[:env_id], node_id: params[:node_id], resource: params[:anything]}
-		  begin
-                      $storage.put(params[:env_id], params[:node_id], params[:anything], request.body.read)
-		  rescue ArgumentError
-                      error!('404', 404)
-		  end
+		              begin
+                      $storage.put(params[:env_id], params[:node_id], params[:anything], JSON.load(request.body.read))
+		                  rescue ArgumentError
+                        error!('404', 404)
+		              end
               end
             end
           end
