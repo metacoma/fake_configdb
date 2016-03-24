@@ -26,5 +26,11 @@ class API < Grape::API
   mount Environments
   mount Environment
 
+    add_swagger_documentation :hide_documentation_path => false,
+                            :api_version => 'v1',
+                            :info => {
+                              title: "fake ConfigDB",
+                              description: "fake"
+                            }
 
 end

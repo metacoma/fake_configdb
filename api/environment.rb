@@ -16,8 +16,10 @@ class Environment < Grape::API
             { env_id: params[:env_id], node_id: params[:node_id] }
           end
           resource :resource do
+            # XXX grape-swagger and grape-router-helpers bug!
+            desc 'Hide this endpoint', hidden: true
             route :any, '*anything' do
-              if request.get? then
+              get do
                   if params[:anything].end_with?("/values") then
                       #{ method: "GET", env_id: params[:env_id], node_id: params[:node_id]}
                       params[:anything]['/values'] = ''
@@ -25,7 +27,8 @@ class Environment < Grape::API
                     else
                       error!('500 /values', 500)
                   end
-                else
+              end
+              put do
                   { env_id: params[:env_id], node_id: params[:node_id], resource: params[:anything]}
 		              begin
                       $storage.put(params[:env_id], params[:node_id], params[:anything], JSON.load(request.body.read))
