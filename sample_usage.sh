@@ -26,8 +26,8 @@ EOF
 component_request_data | curl -X POST -d @- http://localhost:4567/api/v1/config/components
 echo
 curl http://localhost:4567/api/v1/config/components
-exit
 
+exit
 #create env
 curl -X POST -H 'Content-length: 0' http://localhost:4567/api/v1/config/environment/1
 echo
