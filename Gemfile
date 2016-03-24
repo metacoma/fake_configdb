@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 gem 'sinatra'
+gem 'sinatra-cross_origin', '~> 0.3.2'
+gem 'sinatra-swagger-exposer', :git => 'https://github.com/archiloque/sinatra-swagger-exposer.git'
 gem 'grape'
 gem 'grape-route-helpers'
 gem 'rake'

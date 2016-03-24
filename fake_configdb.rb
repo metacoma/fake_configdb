@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'swagger-exposer'
 require 'grape'
 require 'grape/route_helpers'
 
