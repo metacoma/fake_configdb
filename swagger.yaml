@@ -1,0 +1,11 @@
+---
+apiVersion: '0.1'
+swaggerVersion: '1.2'
+produces:
+- application/json
+apis:
+- path: "/environment.{format}"
+  description: Operations about environments
+- path: "/swagger_doc.{format}"
+  description: Operations about swagger_docs
+info: {}
