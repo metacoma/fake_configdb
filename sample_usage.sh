@@ -23,11 +23,13 @@ cat<<EOF
 EOF
 }
 
-component_request_data | curl -X POST -d @- http://localhost:4567/api/v1/config/components
-echo
-curl http://localhost:4567/api/v1/config/components
-exit
+ENDPOINT="lit-plateau-85383.herokuapp.com"
 
+component_request_data | curl -X POST -d @- http://${ENDPOINT}/api/v1/config/components
+echo
+curl http://${ENDPOINT}/api/v1/config/components
+
+exit
 #create env
 curl -X POST -H 'Content-length: 0' http://localhost:4567/api/v1/config/environment/1
 echo
