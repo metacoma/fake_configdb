@@ -22,7 +22,7 @@ class API < Grape::API
   prefix "/api/v1"
 
   mount Components
-  mount Environment
+  mount Environments
 
   add_swagger_documentation :hide_documentation_path => true,
                             :api_version => 'v1',
