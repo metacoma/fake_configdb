@@ -4,8 +4,7 @@ require 'grape/route_helpers'
 require 'grape-swagger'
 require_relative './storage.rb'
 require_relative './api/components.rb'
-#require_relative './api/environments.rb'
-require_relative './api/environment.rb'
+require_relative './api/environments.rb'
 
 class AlreadyExists < StandardError; end
 class ResourceNotFound < StandardError; end
