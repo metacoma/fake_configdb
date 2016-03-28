@@ -5,6 +5,14 @@ class ConfigdbStorage
     raise NotImplementedError.new("You must implement #{name}.")
   end
 
+  def env_exists?(env_id)
+    raise NotImplementedError.new("You must implement #{name}.")
+  end
+
+  def env(env_id)
+    raise NotImplementedError.new("You must implement #{name}.")
+  end
+
   def addEnv(env_id, components)
     raise NotImplementedError.new("You must implement #{name}.")
   end
@@ -34,11 +42,20 @@ class MemoryStorage < ConfigdbStorage
     @env = {}
   end
 
+  def env_exists?(env_id)
+    return @storage.has_key?(env_id)
+  end
+
+  def env(env_id)
+    raise ArgumentError unless env_exists?(env_id)
+    @storage[env_id][:components]
+  end
+
   def addEnv(env_id, components)
     raise ArgumentError if not env_id or env_id <= 0
     raise ArgumentError if not components.size
 
-    if not @storage.has_key?(env_id) then
+    unless env_exists?(env_id) then
         @storage[env_id] = {}
         @storage[env_id]['nodes'] = {}
         @storage[env_id][:components] = {}
